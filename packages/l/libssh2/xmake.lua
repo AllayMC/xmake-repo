@@ -23,7 +23,11 @@ package("libssh2")
     on_load(function (package)
         local backend = package:config("backend")
         if backend ~= "wincng" then
-            package:add("deps", backend)
+            if backend == "openssl" then
+                package:add("deps", "openssl3")
+            else
+                package:add("deps", backend)
+            end
         end
 
         if package:is_plat("windows") and package:config("shared") then
