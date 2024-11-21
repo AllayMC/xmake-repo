@@ -23,11 +23,7 @@ package("libssh2")
     on_load(function (package)
         local backend = package:config("backend")
         if backend ~= "wincng" then
-            if backend == "openssl" then
-                package:add("deps", "openssl3")
-            else
-                package:add("deps", backend)
-            end
+            package:add("deps", backend)
         end
 
         if package:is_plat("windows") and package:config("shared") then
@@ -58,6 +54,10 @@ package("libssh2")
         table.insert(configs, "-DCRYPTO_BACKEND=" .. backend_name[backend])
 
         if backend == "openssl" then
+            -- This call will cause undefined reference. The current version of openssl 
+            -- this function always returns 0.
+            -- docs: https://wiki.openssl.org/index.php/FIPS_mode()
+            io.replace("src/openssl.c", "FIPS_mode()", "0")
             local openssl = package:dep("openssl")
             if not openssl:is_system() then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
