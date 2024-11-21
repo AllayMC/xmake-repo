@@ -57,7 +57,7 @@ package("libssh2")
             -- This call will cause undefined reference. The current version of openssl 
             -- this function always returns 0.
             -- docs: https://wiki.openssl.org/index.php/FIPS_mode()
-            io.replace("src/openssl.c", "FIPS_mode()", "0")
+            io.replace("src/openssl.c", "FIPS_mode()", "0", { plain = true })
             local openssl = package:dep("openssl")
             if not openssl:is_system() then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
